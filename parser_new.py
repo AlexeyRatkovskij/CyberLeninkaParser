@@ -104,9 +104,8 @@ def get_page(driver, c):
         return
 
 
-def get_content(url, years, def_end=False, def_end_value=1):
+def get_content(path, url, years, def_end=False, def_end_value=1):
     try:
-        path = r'C:\\Users\\AlexWells\\Desktop\\Parser\\Chromedriver'
         options = Options()
         options.headless = True
         driver = webdriver.Chrome(executable_path=path, options=options)
@@ -147,7 +146,6 @@ def get_content(url, years, def_end=False, def_end_value=1):
                continue
             finally:
                get_page(driver, j+1)
-
     driver.quit()
     return result
 
@@ -164,6 +162,7 @@ def save_result(content):
 
 
 def create_request():
+    path = r'C:\\Users\\AlexWells\\Desktop\\CyberLeninkaParser\\Chromedriver' #Путь до Chromedriver.exe
     input_request = "JavaScript" #Наш запрос
     url = "https://cyberleninka.ru/search?q=" + input_request #Ссылка с запросом
 
@@ -172,7 +171,7 @@ def create_request():
     year = [2018, 2021] #None или [2021, 2021] или [2020, 2021] указываем либо год, либо диапазон от и до
 
     print("Запускаем скрапинг сайта, ожидайте...")
-    content = get_content(url, year, def_end, def_end_value) #Получаем статьи со всех страниц
+    content = get_content(path, url, year, def_end, def_end_value) #Получаем статьи со всех страниц
     if save_result(content):
         print("Завершено!")
     else:
