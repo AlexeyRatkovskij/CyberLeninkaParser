@@ -25,26 +25,6 @@ def get_html(driver):
     return soup
 
 
-def get_filter_journal(driver, tag_content): #На стадии: а его вообще надо делать?
-    #Нам предлагается ограниченный выбор журналов, хотя по факту их там огромное количество
-    #+ выпадающий список невозможно использовать программно (именно тот, что на сайте, других в.с. это не касается)
-    #try:
-    spn_list_str = []
-    btn_list = tag_content.find_all('button')
-    for i in btn_list:
-        spn_list_str.append(i.find('span').get_text())
-
-    opt_list = tag_content.find_all('option')
-    for i in opt_list:
-        spn_list_str.append(i.get_text())
-    print("Выберите или укажите -1")
-    for i in range(0, len(spn_list_str)): print(str(i) + ". " + spn_list_str[i])
-    value = int(input())
-    if value == -1:
-        print("Вы пропустили выбор журнала.")
-        return
-
-
 def get_filter_year(driver, tag_content, years):
     try:
         tag_list_str = []
@@ -105,6 +85,7 @@ def get_page(driver, c):
 
 
 def get_content(path, url, years, def_end=False, def_end_value=1):
+    driver = None
     try:
         options = Options()
         options.headless = True
@@ -115,7 +96,7 @@ def get_content(path, url, years, def_end=False, def_end_value=1):
         html_articles_search = BeautifulSoup(generated_html, 'html.parser')
         tag_content = html_articles_search.find_all('ul', {'class': 'tag-list'})
 
-        get_filter_year(driver, tag_content[0].find_all('li'), years)    # Заполнение фильтра по годам
+        get_filter_year(driver, tag_content[0].find_all('li'), years)    #Заполнение фильтра по годам
         get_filter_theme(driver, tag_content[1].find_all('li'))          #Заполнение фильтра по темам
         get_filter_theme(driver, tag_content[2].find_all('li'))          #Заполнение фильтра по типу статей
         html_result = get_html(driver)
@@ -123,9 +104,8 @@ def get_content(path, url, years, def_end=False, def_end_value=1):
         count = get_count(html_result, def_end, def_end_value)
     except:
         count = 0
-
+    result = []
     if count != 0:
-        result = []
         for j in range(1, count+1):
             try:
                 html_result = get_html(driver)
